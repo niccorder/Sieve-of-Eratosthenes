@@ -167,7 +167,12 @@ class SievePresenterImpl(
 
     override fun onControlButtonClicked(input: String) {
         when (calculationState) {
-            READY -> calculationDisposable = handleReadyClick(input).subscribe({}, Timber::e)
+            READY -> calculationDisposable = handleReadyClick(input)
+                    .subscribe(
+                            { view?.notifyPrimeAdded() },
+                            { view?.showUnknownError() },
+                            { handleSieveCompleted(calculationStart) }
+                    )
 //            PAUSED -> onResumeCalculation()
 //            RUNNING -> onPauseCalculation()
             COMPLETED -> onResetCalculation()
@@ -200,17 +205,13 @@ class SievePresenterImpl(
                 .filter { !primes.contains(it) }
                 .doOnNext { primes.add(it) }
                 .subscribeOn(Schedulers.computation())
-                .doOnNext { view?.notifyPrimeAdded() }
-                .doOnError { view?.displayCalculationError(it) }
-                .doOnComplete { handleSieveCompleted(calculationStart) }
     }
-
 
     @VisibleForTesting
     fun handleSieveCompleted(start: Long) {
         calculationDuration += clock.currentTimeNanos() - start
 
-        view?.showControlButton(true)
+        calculationState = COMPLETED
         view?.displayCalculationCompleted(calculationDuration)
     }
 
@@ -257,11 +258,10 @@ class SievePresenterImpl(
         if (calculationState == COMPLETED) {
             Timber.d("onResetCalculation()")
 
-            primes = ArrayList()
             view?.clearPrimes()
-            calculationState = READY
-
             view?.showInitalState()
+            primes = ArrayList()
+            calculationState = READY
         }
     }
 }

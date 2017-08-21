@@ -172,22 +172,24 @@ class SieveActivity : DaggerAppCompatActivity(), SieveView {
     }
 
     override fun clearPrimes() {
-        handler.removeCallbacksAndMessages(null)
         adapter.clearAdapter()
     }
 
     override fun showInitalState() {
-        displayControlIcon(R.drawable.ic_play_arrow_black_24dp)
+        handler.post {
+            displayControlIcon(R.drawable.ic_play_arrow_black_24dp)
 
-        title.setText(R.string.title_welcome)
-        subtitle.setText(R.string.subtitle_about)
-        inputView.text = null
+            title.setText(R.string.title_welcome)
+            subtitle.setText(R.string.subtitle_about)
+            inputView.text = null
 
-        title.visibility = View.VISIBLE
-        subtitle.visibility = View.VISIBLE
-        inputView.visibility = View.VISIBLE
+            title.visibility = View.VISIBLE
+            subtitle.visibility = View.VISIBLE
+            inputView.visibility = View.VISIBLE
 
-        showKeyboard(true)
+            primeRecycler.visibility = View.VISIBLE
+            inputView.requestFocus()
+        }
     }
 
     override fun showRangeInputLayout(show: Boolean) {
@@ -229,9 +231,11 @@ class SieveActivity : DaggerAppCompatActivity(), SieveView {
     }
 
     override fun showControlButton(show: Boolean) {
-        controlFab.visibility = when (show) {
-            true -> View.VISIBLE
-            false -> View.GONE
+        handler.post {
+            controlFab.visibility = when (show) {
+                true -> View.VISIBLE
+                false -> View.GONE
+            }
         }
     }
 
@@ -259,9 +263,10 @@ class SieveActivity : DaggerAppCompatActivity(), SieveView {
     }
 
     override fun displayCalculationCompleted(duration: Long) {
-        handler.post({
+        handler.postAtTime({
             displayControlIcon(R.drawable.ic_replay_black_24dp)
 
+            showControlButton(true)
             subtitle.visibility = View.VISIBLE
             val durationInSeconds: Double = duration / 1000000000.0
             subtitle.text = getString(R.string.subtitle_complete, durationInSeconds.toString())
@@ -271,7 +276,7 @@ class SieveActivity : DaggerAppCompatActivity(), SieveView {
 
             inputView.visibility = View.GONE
             recycler.visibility = View.VISIBLE
-        })
+        }, lastNotifiedAdapter)
     }
 
     override fun showKeyboard(show: Boolean) {
