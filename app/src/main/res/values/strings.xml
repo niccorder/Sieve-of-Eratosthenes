@@ -1,0 +1,18 @@
+<resources>
+  <string name="app_name">Loneliest Numbers</string>
+
+  <string name="title_welcome">Welcome!</string>
+  <string name="title_calculating">Calculating</string>
+  <string name="title_paused">Paused</string>
+  <string name="title_complete">Sieve Complete!</string>
+
+  <string name="subtitle_about">Enter a value, and press play to begin: </string>
+  <string name="subtitle_paused">Press the play to resume calculations.</string>
+  <string name="subtitle_complete">It took %s sec to calculate. Not bad!</string>
+
+  <string name="title_primes">Primes</string>
+  <string name="input_hint">#</string>
+  <string name="unknown_error_prompt">Oops! Something went wrong. Please try again.</string>
+  <string name="error_invalid_argument">Input must be greater than 0</string>
+  <string name="error_not_a_number">Input is invalid.</string>
+</resources>
